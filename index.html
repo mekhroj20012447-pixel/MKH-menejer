@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Kunlik Daftar</title>
+<meta name="theme-color" content="#1F3B2C" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<link rel="icon" href="icons/favicon-32.png" />
+<style>
+  :root{
+    --cover:#1F3B2C; --cover-dark:#152A1F; --paper:#FBF7EC; --paper-line:#E3D9BE;
+    --ink:#2B2118; --ink-soft:#6B5F4D; --gold:#A6832C; --gold-soft:#D9C48A;
+    --income:#3F6B4F; --income-bg:#E7EFE4; --expense:#8C3B2E; --expense-bg:#F3E4DF;
+    --card:#3A5A78;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);font-family:Georgia,'Times New Roman',serif;color:var(--ink);
+       -webkit-tap-highlight-color:transparent;}
+  .mono{font-family:'Courier New',monospace;}
+  .cover{background:linear-gradient(180deg,var(--cover),var(--cover-dark));padding:24px 20px 20px;}
+  .cover h1{color:var(--paper);font-size:1.3rem;margin:0 0 2px;display:flex;align-items:center;gap:8px;}
+  .cover p{color:var(--gold-soft);font-size:.75rem;margin:0;opacity:.9;}
+  .tabs{display:flex;gap:8px;margin-top:16px;}
+  .tab-btn{flex:1;border-radius:999px;padding:9px 0;font-size:.9rem;font-weight:700;
+           border:1px solid var(--gold);background:transparent;color:var(--gold-soft);}
+  .tab-btn.active{background:var(--gold);color:var(--cover-dark);}
+  .wrap{max-width:480px;margin:0 auto;padding:20px 16px;}
+  .datenav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .datenav button{background:none;border:none;color:var(--ink);padding:8px;border-radius:999px;font-size:1.1rem;}
+  .datenav .dtitle{text-align:center;}
+  .datenav .dtitle b{display:block;font-size:1rem;}
+  .datenav .dtitle span{font-size:.75rem;color:var(--ink-soft);}
+  .rest-btn{width:100%;margin-bottom:16px;border-radius:12px;padding:9px 0;font-size:.85rem;
+            border:1px solid var(--paper-line);background:transparent;color:var(--ink-soft);}
+  .rest-btn.active{border-color:var(--expense);background:var(--expense-bg);color:var(--expense);}
+  .card{background:#fff;border:1px solid var(--paper-line);border-radius:16px;padding:16px;margin-bottom:20px;
+        box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .row2{display:flex;gap:8px;margin-bottom:12px;}
+  .pillbtn{flex:1;border-radius:8px;padding:9px 0;font-size:.85rem;font-weight:700;border:none;}
+  .pillbtn.income-off{background:var(--income-bg);color:var(--income);}
+  .pillbtn.income-on{background:var(--income);color:#fff;}
+  .pillbtn.expense-off{background:var(--expense-bg);color:var(--expense);}
+  .pillbtn.expense-on{background:var(--expense);color:#fff;}
+  .method-off{background:var(--paper);color:var(--ink-soft);border:1px solid var(--paper-line);}
+  .method-naqt-on{background:var(--gold);color:#fff;border:1px solid var(--paper-line);}
+  .method-karta-on{background:var(--card);color:#fff;border:1px solid var(--paper-line);}
+  .catwrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+  .catchip{border-radius:999px;padding:5px 10px;font-size:.7rem;font-weight:600;border:none;
+           background:var(--expense-bg);color:var(--expense);}
+  .catchip.active{background:var(--expense);color:#fff;}
+  input[type=text]{width:100%;border:1px solid var(--paper-line);border-radius:8px;padding:9px 12px;
+       font-size:.85rem;outline:none;margin-bottom:10px;color:var(--ink);font-family:inherit;}
+  .addbtn{width:100%;border-radius:8px;padding:11px 0;font-size:.9rem;font-weight:700;border:none;
+          background:var(--cover);color:var(--paper);}
+  .label{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin-bottom:8px;}
+  .entry{display:flex;align-items:center;justify-content:space-between;padding:6px 0;
+         border-bottom:1px dotted var(--paper-line);gap:8px;}
+  .entry:last-child{border-bottom:none;}
+  .entry .left{display:flex;align-items:center;gap:6px;min-width:0;font-size:.85rem;}
+  .entry .left .note{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .badge{font-size:.62rem;background:var(--expense-bg);color:var(--expense);padding:1px 7px;border-radius:999px;flex-shrink:0;}
+  .amt{font-weight:700;font-size:.85rem;flex-shrink:0;}
+  .del{background:none;border:none;color:var(--ink-soft);font-size:.9rem;padding:2px 4px;flex-shrink:0;}
+  .totalcard{background:var(--cover);border-radius:16px;padding:16px;color:var(--paper);}
+  .totalcard .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .totalcard .small{font-size:.7rem;color:var(--gold-soft);}
+  .totalcard .sub{font-size:.7rem;opacity:.7;}
+  .totalcard .net{font-size:1.3rem;font-weight:700;}
+  .split{border-top:1px solid rgba(255,255,255,.15);padding-top:10px;display:flex;justify-content:space-between;font-size:.75rem;color:var(--gold-soft);}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+  .stat{border-radius:12px;padding:10px;text-align:center;}
+  .stat .lbl{font-size:.65rem;margin-bottom:4px;}
+  .stat .val{font-size:.85rem;font-weight:700;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+  .balcard{background:#fff;border-radius:12px;padding:12px;display:flex;align-items:center;gap:8px;}
+  .monthrow{display:flex;justify-content:space-between;align-items:center;width:100%;padding:8px 4px;
+            border-bottom:1px dotted var(--paper-line);background:none;border-left:none;border-right:none;border-top:none;text-align:left;}
+  .monthrow.active{background:var(--expense-bg);border-radius:6px;}
+  .monthrow b{font-size:.85rem;}
+  .catbar-wrap{margin-bottom:10px;}
+  .catbar-lbl{display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:4px;}
+  .catbar-bg{background:var(--expense-bg);height:8px;border-radius:999px;overflow:hidden;}
+  .catbar-fill{background:var(--expense);height:100%;}
+  .dayline{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dotted var(--paper-line);font-size:.75rem;}
+  .scrollbox{max-height:320px;overflow-y:auto;}
+  .empty{text-align:center;color:var(--ink-soft);font-size:.85rem;font-style:italic;padding:16px 0;}
+  .saving{text-align:center;font-size:.7rem;color:var(--ink-soft);margin-top:8px;}
+  svg{vertical-align:middle;}
+</style>
+</head>
+<body>
+<div class="cover">
+  <h1>📖 Kunlik Daftar</h1>
+  <p>Naqt, karta va kategoriyalar bo'yicha hisob-kitob</p>
+  <div class="tabs">
+    <button class="tab-btn active" id="tabDayBtn" onclick="setTab('day')">Kunlik</button>
+    <button class="tab-btn" id="tabReportBtn" onclick="setTab('report')">📊 Hisobot</button>
+  </div>
+</div>
+
+<div class="wrap" id="dayView"></div>
+<div class="wrap" id="reportView" style="display:none"></div>
+
+<script>
+const CATEGORIES = ["Taksi","Sigaret","Ichimlik/Energetik","Ehson","Ovqat","Kommunal","Boshqa"];
+const WEEKDAYS = ["Yakshanba","Dushanba","Seshanba","Chorshanba","Payshanba","Juma","Shanba"];
+const MONTHS = ["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
+const STORAGE_KEY = "kunlik-daftar-data";
+
+let data = { entries:{}, restDays:{} };
+let selectedDate = new Date();
+let tab = 'day';
+let entryType = 'kirim';
+let method = 'naqt';
+let category = CATEGORIES[0];
+let reportMonth = null;
+
+function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) data = JSON.parse(raw);
+  }catch(e){ console.error(e); }
+}
+function save(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+  catch(e){ console.error(e); }
+}
+function toKey(d){
+  const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function monthKey(k){ return k.slice(0,7); }
+function fmt(n){
+  n = Math.round(n);
+  const sign = n<0 ? "-" : "";
+  return sign + Math.abs(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+function addDays(d,n){ const nd=new Date(d); nd.setDate(nd.getDate()+n); return nd; }
+function esc(s){ const d=document.createElement('div'); d.textContent = s ?? ""; return d.innerHTML; }
+
+function setTab(t){
+  tab = t;
+  document.getElementById('tabDayBtn').className = 'tab-btn' + (t==='day' ? ' active':'');
+  document.getElementById('tabReportBtn').className = 'tab-btn' + (t==='report' ? ' active':'');
+  document.getElementById('dayView').style.display = t==='day' ? 'block':'none';
+  document.getElementById('reportView').style.display = t==='report' ? 'block':'none';
+  if(t==='day') renderDay(); else renderReport();
+}
+
+function walletIcon(color){ return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>`; }
+function cardIcon(color){ return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`; }
+
+function changeDate(delta){ selectedDate = addDays(selectedDate, delta); renderDay(); }
+
+function toggleRestDay(){
+  const k = toKey(selectedDate);
+  if(data.restDays[k]) delete data.restDays[k]; else data.restDays[k] = true;
+  save(); renderDay();
+}
+
+function setEntryType(t){ entryType = t; renderDay(); }
+function setMethod(m){ method = m; renderDay(); }
+function setCategory(c){ category = c; renderDay(); }
+
+function addEntry(){
+  const dateKey = toKey(selectedDate);
+  const isRest = !!data.restDays[dateKey];
+  const amountInput = document.getElementById('amountInput');
+  const noteInput = document.getElementById('noteInput');
+  const val = parseFloat((amountInput.value||"").replace(/\s/g,'').replace(',','.'));
+  if(!val || val<=0){ amountInput.focus(); return; }
+  const type = isRest ? 'chiqim' : entryType;
+  const entry = { id: Date.now()+Math.random(), type, amount: val, note:(noteInput.value||"").trim(),
+                  method, category: type==='chiqim' ? category : null };
+  if(!data.entries[dateKey]) data.entries[dateKey] = [];
+  data.entries[dateKey].push(entry);
+  save();
+  amountInput.value=""; noteInput.value="";
+  renderDay();
+}
+
+function deleteEntry(dateKey, id){
+  data.entries[dateKey] = (data.entries[dateKey]||[]).filter(e=>e.id!==id);
+  if(!data.entries[dateKey].length) delete data.entries[dateKey];
+  save(); renderDay();
+}
+
+function renderDay(){
+  const dateKey = toKey(selectedDate);
+  const isRest = !!data.restDays[dateKey];
+  const entries = data.entries[dateKey] || [];
+  const income = entries.filter(e=>e.type==='kirim').reduce((s,e)=>s+e.amount,0);
+  const expense = entries.filter(e=>e.type==='chiqim').reduce((s,e)=>s+e.amount,0);
+  const net = income-expense;
+  const cashNet = entries.filter(e=>e.method==='naqt').reduce((s,e)=>s+(e.type==='kirim'?e.amount:-e.amount),0);
+  const cardNet = entries.filter(e=>e.method==='karta').reduce((s,e)=>s+(e.type==='kirim'?e.amount:-e.amount),0);
+
+  let html = `
+  <div class="datenav">
+    <button onclick="changeDate(-1)">&#8249;</button>
+    <div class="dtitle"><b>${selectedDate.getDate()} ${MONTHS[selectedDate.getMonth()]} ${selectedDate.getFullYear()}</b>
+      <span>${WEEKDAYS[selectedDate.getDay()]}</span></div>
+    <button onclick="changeDate(1)">&#8250;</button>
+  </div>
+  <button class="rest-btn ${isRest?'active':''}" onclick="toggleRestDay()">
+    ${isRest ? "Dam olish kuni — faqat xarajat" : "Bu kunni dam olish kuni qilish"}
+  </button>
+  <div class="card">
+    ${!isRest ? `
+    <div class="row2">
+      <button class="pillbtn ${entryType==='kirim'?'income-on':'income-off'}" onclick="setEntryType('kirim')">+ Kirim (topilgan)</button>
+      <button class="pillbtn ${entryType==='chiqim'?'expense-on':'expense-off'}" onclick="setEntryType('chiqim')">− Chiqim (xarajat)</button>
+    </div>` : `<div style="color:var(--expense);font-size:.75rem;text-align:center;margin-bottom:10px;">Faqat xarajat kiritiladi</div>`}
+    <div class="row2">
+      <button class="pillbtn ${method==='naqt'?'method-naqt-on':'method-off'}" onclick="setMethod('naqt')">${walletIcon(method==='naqt'?'#fff':'#6B5F4D')} Naqt</button>
+      <button class="pillbtn ${method==='karta'?'method-karta-on':'method-off'}" onclick="setMethod('karta')">${cardIcon(method==='karta'?'#fff':'#6B5F4D')} Karta</button>
+    </div>
+    ${(isRest || entryType==='chiqim') ? `
+    <div class="catwrap">
+      ${CATEGORIES.map(c=>`<button class="catchip ${category===c?'active':''}" onclick="setCategory('${c}')">${c}</button>`).join('')}
+    </div>` : ''}
+    <input type="text" id="amountInput" inputmode="decimal" placeholder="Summa (so'm)" class="mono" />
+    <input type="text" id="noteInput" placeholder="Izoh (ixtiyoriy)" />
+    <button class="addbtn" onclick="addEntry()">+ Qo'shish</button>
+  </div>
+  <div class="card">
+    <div class="label">Shu kungi yozuvlar</div>
+    ${entries.length===0 ? `<div class="empty">Hali yozuv yo'q</div>` : entries.map(e=>`
+      <div class="entry">
+        <span class="left">
+          ${e.method==='naqt' ? walletIcon('#A6832C') : cardIcon('#3A5A78')}
+          <span class="note">${esc(e.note) || (e.type==='kirim' ? 'Topilgan pul' : esc(e.category)||'Xarajat')}</span>
+          ${e.type==='chiqim' && e.category ? `<span class="badge">${esc(e.category)}</span>` : ''}
+        </span>
+        <span style="display:flex;align-items:center;gap:8px;">
+          <span class="amt mono" style="color:${e.type==='kirim'?'var(--income)':'var(--expense)'}">${e.type==='kirim'?'+':'−'}${fmt(e.amount)}</span>
+          <button class="del" onclick="deleteEntry('${dateKey}', ${e.id})">✕</button>
+        </span>
+      </div>`).join('')}
+  </div>
+  <div class="totalcard">
+    <div class="top">
+      <div><div class="small">Kunlik natija</div><div class="sub">Kirim ${fmt(income)} · Chiqim ${fmt(expense)}</div></div>
+      <div class="net mono" style="color:${net>=0?'#8FD9A8':'#E39B8C'}">${net>=0?'+':''}${fmt(net)}</div>
+    </div>
+    <div class="split">
+      <span>${walletIcon('#D9C48A')} Naqt: <span class="mono">${cashNet>=0?'+':''}${fmt(cashNet)}</span></span>
+      <span>${cardIcon('#D9C48A')} Karta: <span class="mono">${cardNet>=0?'+':''}${fmt(cardNet)}</span></span>
+    </div>
+  </div>`;
+  document.getElementById('dayView').innerHTML = html;
+}
+
+function buildReport(){
+  const months = {};
+  let totalIncome=0, totalExpense=0, cashBalance=0, cardBalance=0;
+  const dayRows = [];
+  Object.keys(data.entries).sort().forEach(k=>{
+    const list = data.entries[k];
+    const inc = list.filter(e=>e.type==='kirim').reduce((s,e)=>s+e.amount,0);
+    const exp = list.filter(e=>e.type==='chiqim').reduce((s,e)=>s+e.amount,0);
+    totalIncome+=inc; totalExpense+=exp;
+    const mk = monthKey(k);
+    if(!months[mk]) months[mk] = {income:0, expense:0, categories:{}};
+    months[mk].income += inc; months[mk].expense += exp;
+    list.forEach(e=>{
+      const signed = e.type==='kirim' ? e.amount : -e.amount;
+      if(e.method==='naqt') cashBalance += signed; else if(e.method==='karta') cardBalance += signed;
+      if(e.type==='chiqim'){ const cat = e.category || 'Boshqa'; months[mk].categories[cat] = (months[mk].categories[cat]||0)+e.amount; }
+    });
+    dayRows.push({key:k, income:inc, expense:exp, net:inc-exp, rest: !!data.restDays[k]});
+  });
+  const monthRows = Object.keys(months).sort().map(mk=>({
+    key:mk, label: `${MONTHS[parseInt(mk.slice(5,7),10)-1]} ${mk.slice(0,4)}`,
+    income:months[mk].income, expense:months[mk].expense, net:months[mk].income-months[mk].expense,
+    categories: months[mk].categories
+  }));
+  return { totalIncome, totalExpense, net: totalIncome-totalExpense, cashBalance, cardBalance,
+           monthRows, dayRows: dayRows.reverse() };
+}
+
+function selectReportMonth(mk){ reportMonth = mk; renderReport(); }
+
+function renderReport(){
+  const report = buildReport();
+  const activeKey = reportMonth || (report.monthRows.length ? report.monthRows[report.monthRows.length-1].key : null);
+  const activeMonth = report.monthRows.find(m=>m.key===activeKey);
+  const catList = activeMonth ? Object.entries(activeMonth.categories).sort((a,b)=>b[1]-a[1]) : [];
+  const maxCat = catList.length ? catList[0][1] : 1;
+
+  let html = `
+  <div class="grid3">
+    <div class="stat" style="background:var(--income-bg)"><div class="lbl" style="color:var(--income)">Jami kirim</div><div class="val mono" style="color:var(--income)">${fmt(report.totalIncome)}</div></div>
+    <div class="stat" style="background:var(--expense-bg)"><div class="lbl" style="color:var(--expense)">Jami chiqim</div><div class="val mono" style="color:var(--expense)">${fmt(report.totalExpense)}</div></div>
+    <div class="stat" style="background:var(--cover)"><div class="lbl" style="color:var(--gold-soft)">Sof foyda</div><div class="val mono" style="color:var(--paper)">${fmt(report.net)}</div></div>
+  </div>
+  <div class="grid2">
+    <div class="balcard" style="border:1px solid var(--gold)">${walletIcon('#A6832C')}<div><div style="font-size:.7rem;color:var(--ink-soft)">Naqt balans</div><div class="mono" style="font-weight:700;font-size:.85rem">${fmt(report.cashBalance)}</div></div></div>
+    <div class="balcard" style="border:1px solid var(--card)">${cardIcon('#3A5A78')}<div><div style="font-size:.7rem;color:var(--ink-soft)">Karta balans</div><div class="mono" style="font-weight:700;font-size:.85rem">${fmt(report.cardBalance)}</div></div></div>
+  </div>
+  <div class="label">Oylar bo'yicha</div>
+  ${report.monthRows.length===0 ? `<div class="empty" style="margin-bottom:20px">Hali ma'lumot yo'q</div>` : `
+  <div class="card">
+    ${report.monthRows.map(m=>`
+      <button class="monthrow ${activeKey===m.key?'active':''}" onclick="selectReportMonth('${m.key}')">
+        <b>${m.label}</b>
+        <span style="text-align:right">
+          <div class="mono" style="font-size:.75rem"><span style="color:var(--income)">+${fmt(m.income)}</span> <span style="color:var(--expense)">−${fmt(m.expense)}</span></div>
+          <div class="mono" style="font-weight:700;font-size:.85rem;color:${m.net>=0?'var(--income)':'var(--expense)'}">= ${fmt(m.net)}</div>
+        </span>
+      </button>`).join('')}
+  </div>`}
+  ${activeMonth ? `
+  <div class="label">${activeMonth.label} — kategoriya bo'yicha xarajat</div>
+  <div class="card">
+    ${catList.length===0 ? `<div class="empty">Bu oyda xarajat yo'q</div>` : catList.map(([cat,val])=>`
+      <div class="catbar-wrap">
+        <div class="catbar-lbl"><b>${esc(cat)}</b><span class="mono" style="color:var(--expense);font-weight:700">${fmt(val)}</span></div>
+        <div class="catbar-bg"><div class="catbar-fill" style="width:${(val/maxCat)*100}%"></div></div>
+      </div>`).join('')}
+  </div>` : ''}
+  <div class="label">Kunlar bo'yicha (oxirgisidan)</div>
+  <div class="card scrollbox">
+    ${report.dayRows.length===0 ? `<div class="empty">—</div>` : report.dayRows.map(r=>`
+      <div class="dayline"><span>${r.key} ${r.rest ? '🔖' : ''}</span>
+        <span class="mono" style="font-weight:700;color:${r.net>=0?'var(--income)':'var(--expense)'}">${r.net>=0?'+':''}${fmt(r.net)}</span></div>`).join('')}
+  </div>`;
+  document.getElementById('reportView').innerHTML = html;
+}
+
+load();
+renderDay();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
